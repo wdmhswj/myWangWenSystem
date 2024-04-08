@@ -2,7 +2,7 @@ package structs
 
 import "time"
 
-type RankingList struct {
+type RankingList_yousuu struct {
 	Time     time.Time
 	Name     string
 	Url      string

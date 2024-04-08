@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crawler/parse"
 	"crawler/yousuu"
 	"encoding/json"
 	"fmt"
@@ -8,7 +9,10 @@ import (
 )
 
 func main() {
+	parse.Parse_html("E:/repositories/myWangWenSystem/src/html/test.html")
+}
 
+func test_yousuu() {
 	test, err := yousuu.GetTodayPopularNovels()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -30,5 +34,4 @@ func main() {
 	}
 
 	fmt.Println("JSON 文件保存成功！")
-
 }

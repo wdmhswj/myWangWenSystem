@@ -32,7 +32,7 @@ func fmt2Entity(s string) ListEntity_yousuu {
 		fmt.Println(err.Error())
 	}
 
-	res := ListEntity{
+	res := ListEntity_yousuu{
 		Rank:       rank,
 		Name:       attrs[1],
 		WordNum:    wordNum,

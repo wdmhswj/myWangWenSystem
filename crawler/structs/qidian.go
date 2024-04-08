@@ -21,4 +21,5 @@ type ListEntity_qidian struct {
 	Grade      float32 // 评分
 	GradersNum int     // 评分人数
 	Rank       int     // 排名
+	BookUrl    string	// 小说页面url
 }

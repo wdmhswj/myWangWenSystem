@@ -6,13 +6,14 @@ import (
 	"strings"
 	"time"
 
+	. "crawler/structs"
 	. "crawler/utils"
 
 	"github.com/gocolly/colly"
 )
 
-func getTodayPopularNovels() (RankingList, error) {
-	oneRankList := RankingList{
+func getTodayPopularNovels() (RankingList_yousuu, error) {
+	oneRankList := RankingList_yousuu{
 		Time: time.Now(),
 		Name: "今日热门小说",
 		Url:  "https://www.yousuu.com/rank/today",
