@@ -4,6 +4,7 @@ import (
 	"crawler/structs"
 	. "crawler/structs"
 	"fmt"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -11,7 +12,13 @@ import (
 )
 
 func getTodayPopularNovels() (RankingList_qidian, error) {
-
+	pages := []string{
+		"https://www.qidian.com/rank/readindex/page1/",
+		"https://www.qidian.com/rank/readindex/page2/",
+		"https://www.qidian.com/rank/readindex/page3/",
+		"https://www.qidian.com/rank/readindex/page4/",
+		"https://www.qidian.com/rank/readindex/page5/",
+	}
 	var ranklist structs.RankingList_qidian
 	ranklist.Url = "https://www.qidian.com/rank/readindex/"
 	ranklist.Time = time.Now()
@@ -28,8 +35,11 @@ func getTodayPopularNovels() (RankingList_qidian, error) {
 
 	// 排行榜名称
 	c.OnHTML("div.rank-header h3.lang", func(e *colly.HTMLElement) {
-		fmt.Printf("rank name: %s\n", e.Text)
-		ranklist.Name = e.Text
+		if len(ranklist.Name) == 0 {
+			fmt.Printf("rank name: %s\n", e.Text)
+			ranklist.Name = e.Text
+		}
+
 	})
 
 	c.OnHTML("div.rank-body div.rank-view-list div.book-img-text ul li", func(e *colly.HTMLElement) {
@@ -37,10 +47,31 @@ func getTodayPopularNovels() (RankingList_qidian, error) {
 		var entity structs.ListEntity_qidian
 
 		// rank
-		rank := e.Attr("data-rid")
-		fmt.Println("data-rid 属性值:", rank)
-		entity.Rank, _ = strconv.Atoi(rank)
+		var index int
+		requestURL := e.Request.URL.String()
+		re, err := regexp.Compile(`page(\d+)`)
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			match := re.FindStringSubmatch(requestURL)
+			if len(match) > 1 {
+				fmt.Println("匹配的数字部分:", match[1])
+				index, err = strconv.Atoi(match[1])
+				if err != nil {
+					fmt.Println(err.Error())
+				}
+			} else {
+				fmt.Println("未找到匹配")
+			}
 
+		}
+
+		fmt.Println("requestURL:", requestURL)
+		rank, _ := strconv.Atoi(e.Attr("data-rid"))
+		fmt.Println("old rank:", rank)
+		rank += 20 * (index - 1)
+		fmt.Println("rank:", rank)
+		entity.Rank = rank
 		// // img src
 		// imgUrl := e.DOM.Find("div.book-img-box").Text()
 		// fmt.Println("imgUrl:", imgUrl)
@@ -91,6 +122,13 @@ func getTodayPopularNovels() (RankingList_qidian, error) {
 
 	})
 
+	// c.OnHTML("ul.lbf-pagination-item-list li.lbf-pagination-item a", func(h *colly.HTMLElement) {
+	// 	if !h.DOM.HasClass("lbf-pagination-disabled") && h.DOM.HasClass("lbf-pagination-next") {
+	// 		fmt.Println("next url:", h.Attr())
+	// 		c.Visit()
+	// 	}
+	// })
+
 	// Before making a request print "Visiting ..."
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL.String())
@@ -126,10 +164,14 @@ func getTodayPopularNovels() (RankingList_qidian, error) {
 		// 打印响应体（HTML 或者其他数据）
 		fmt.Println("响应体: ...")
 		// fmt.Println(string(r.Body))
+
 	})
 
 	// Start scraping on https://hackerspaces.org
-	c.Visit("https://www.qidian.com/rank/readindex/")
+	// c.Visit("https://www.qidian.com/rank/readindex/")
+	for _, url := range pages {
+		c.Visit(url)
+	}
 
 	return ranklist, nil
 }
