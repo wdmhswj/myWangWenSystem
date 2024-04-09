@@ -1,7 +1,8 @@
 package main
 
 import (
-	"crawler/parse"
+	"crawler/qidian"
+	"crawler/utils"
 	"crawler/yousuu"
 	"encoding/json"
 	"fmt"
@@ -9,7 +10,8 @@ import (
 )
 
 func main() {
-	parse.Parse_html("E:/repositories/myWangWenSystem/src/html/test.html")
+	rankList, _ := qidian.GetTodayPopularNovels()
+	utils.SaveAsJson(rankList.Name, rankList)
 }
 
 func test_yousuu() {

@@ -41,5 +41,3 @@ func findTitle(n *html.Node) string {
 	}
 	return ""
 }
-
-func findHeader
