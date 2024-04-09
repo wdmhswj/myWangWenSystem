@@ -3,6 +3,7 @@ package qidian
 import (
 	"crawler/structs"
 	. "crawler/structs"
+	"crawler/utils"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -11,22 +12,24 @@ import (
 	"github.com/gocolly/colly"
 )
 
-func getTodayPopularNovels() (RankingList_qidian, error) {
-	pages := []string{
-		"https://www.qidian.com/rank/readindex/page1/",
-		"https://www.qidian.com/rank/readindex/page2/",
-		"https://www.qidian.com/rank/readindex/page3/",
-		"https://www.qidian.com/rank/readindex/page4/",
-		"https://www.qidian.com/rank/readindex/page5/",
-	}
+func getTodayPopularNovels(initialUrl, pageTemplete, allowDomain, placeHoler string, pageNumber int) (RankingList_qidian, error) {
+	// pageTemplete := "https://www.qidian.com/rank/readindex/page{index}/"
+	// pages := []string{
+	// 	"https://www.qidian.com/rank/readindex/page1/",
+	// 	"https://www.qidian.com/rank/readindex/page2/",
+	// 	"https://www.qidian.com/rank/readindex/page3/",
+	// 	"https://www.qidian.com/rank/readindex/page4/",
+	// 	"https://www.qidian.com/rank/readindex/page5/",
+	// }
 	var ranklist structs.RankingList_qidian
-	ranklist.Url = "https://www.qidian.com/rank/readindex/"
+	// ranklist.Url = "https://www.qidian.com/rank/readindex/"
+	ranklist.Url = initialUrl
 	ranklist.Time = time.Now()
 
 	// Instantiate default collector
 	c := colly.NewCollector(
 		// Visit only domains: hackerspaces.org, wiki.hackerspaces.org
-		colly.AllowedDomains("www.qidian.com"),
+		colly.AllowedDomains(allowDomain),
 	)
 
 	// c.OnHTML("*", func(e *colly.HTMLElement) {
@@ -43,7 +46,7 @@ func getTodayPopularNovels() (RankingList_qidian, error) {
 	})
 
 	c.OnHTML("div.rank-body div.rank-view-list div.book-img-text ul li", func(e *colly.HTMLElement) {
-		fmt.Printf("entity body: %s\n", e.Text)
+		// fmt.Printf("entity body: %s\n", e.Text)
 		var entity structs.ListEntity_qidian
 
 		// rank
@@ -169,7 +172,9 @@ func getTodayPopularNovels() (RankingList_qidian, error) {
 
 	// Start scraping on https://hackerspaces.org
 	// c.Visit("https://www.qidian.com/rank/readindex/")
-	for _, url := range pages {
+	for i := 1; i <= pageNumber; i++ {
+		url := utils.ReplacePlaceholer(placeHoler, pageTemplete, strconv.Itoa(i))
+		// fmt.Println("Visit:", url)
 		c.Visit(url)
 	}
 
@@ -177,3 +182,22 @@ func getTodayPopularNovels() (RankingList_qidian, error) {
 }
 
 var GetTodayPopularNovels = getTodayPopularNovels
+
+func GetViableRanks(rankNames []string, placeHolder string) {
+	for _, name := range rankNames {
+		rankList, err := getTodayPopularNovels(
+			"https://www.qidian.com/rank/"+name+"/",
+			"https://www.qidian.com/rank/"+name+"/page"+placeHolder+"/",
+			// "https://www.qidian.com/rank/readindex/page{index}/",
+			"www.qidian.com",
+			placeHolder,
+			5,
+		)
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			utils.SaveAsJson(rankList.Name+rankList.Time.Format("20060102150405"), rankList)
+		}
+
+	}
+}
