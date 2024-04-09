@@ -2,6 +2,7 @@ package main
 
 import (
 	"crawler/qidian"
+	"crawler/structs"
 )
 
 func main() {
@@ -25,21 +26,22 @@ func main() {
 
 	// utils.SaveAsJson(rankList2.Name+rankList2.Time.Format("20060102150405"), rankList2)
 
-	var rankNames []string = []string{
-		"readindex",
-		"newfans",
-		"yuepiao",
-		"hotsales",
-		"newfans",
-		"recom",
-		"collect",
-		"vipup",
-		"vipcollect",
-	}
+	// var rankNames []string = []string{
+	// 	"readindex",
+	// 	"newfans",
+	// 	"yuepiao",
+	// 	"hotsales",
+	// 	"newfans",
+	// 	"recom",
+	// 	"collect",
+	// 	"vipup",
+	// 	"vipcollect",
+	// }
 
 	placeHolder := "{index}"
 
-	qidian.GetViableRanks(rankNames, placeHolder)
+	// qidian.GetViableRanks(structs.Ranks, placeHolder)
+	qidian.GetViableRankSpecifyClasses(structs.Ranks, structs.TagsPageName, placeHolder)
 }
 
 // func test_yousuu() {

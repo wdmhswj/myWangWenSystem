@@ -18,4 +18,11 @@ func TestReplacePlaceholer(t *testing.T) {
 		res = ReplacePlaceholer("{count}", res, "2")
 		asserCorrectMessage(t, res, want)
 	})
+
+	t.Run("test1", func(t *testing.T) {
+		filename := "../test"
+		SaveAsJson(filename, "test")
+		// res = ReplacePlaceholer("{count}", res, "2")
+		// asserCorrectMessage(t, res, want)
+	})
 }

@@ -2,7 +2,6 @@ package qidian
 
 import (
 	"crawler/structs"
-	. "crawler/structs"
 	"crawler/utils"
 	"fmt"
 	"regexp"
@@ -12,7 +11,7 @@ import (
 	"github.com/gocolly/colly"
 )
 
-func getTodayPopularNovels(initialUrl, pageTemplete, allowDomain, placeHoler string, pageNumber int) (RankingList_qidian, error) {
+func getRankData(initialUrl, pageTemplete, allowDomain, placeHoler string, pageNumber int) (structs.RankingList_qidian, error) {
 	// pageTemplete := "https://www.qidian.com/rank/readindex/page{index}/"
 	// pages := []string{
 	// 	"https://www.qidian.com/rank/readindex/page1/",
@@ -181,11 +180,11 @@ func getTodayPopularNovels(initialUrl, pageTemplete, allowDomain, placeHoler str
 	return ranklist, nil
 }
 
-var GetTodayPopularNovels = getTodayPopularNovels
+var GetRankData = getRankData
 
 func GetViableRanks(rankNames []string, placeHolder string) {
 	for _, name := range rankNames {
-		rankList, err := getTodayPopularNovels(
+		rankList, err := getRankData(
 			"https://www.qidian.com/rank/"+name+"/",
 			"https://www.qidian.com/rank/"+name+"/page"+placeHolder+"/",
 			// "https://www.qidian.com/rank/readindex/page{index}/",
@@ -197,6 +196,27 @@ func GetViableRanks(rankNames []string, placeHolder string) {
 			fmt.Println(err.Error())
 		} else {
 			utils.SaveAsJson(rankList.Name+rankList.Time.Format("20060102150405"), rankList)
+		}
+
+	}
+}
+
+func GetViableRankSpecifyClasses(rankNames []string, tagsName []string, placeHolder string) {
+	for _, name := range rankNames {
+		for _, tagname := range tagsName {
+			rankList, err := getRankData(
+				"https://www.qidian.com/rank/"+name+"/"+tagname+"/",
+				"https://www.qidian.com/rank/"+name+"/"+tagname+"/page"+placeHolder+"/",
+				// "https://www.qidian.com/rank/readindex/page{index}/",
+				"www.qidian.com",
+				placeHolder,
+				5,
+			)
+			if err != nil {
+				fmt.Println(err.Error())
+			} else {
+				utils.SaveAsJson(rankList.Name+structs.ReversedMap[tagname]+rankList.Time.Format("20060102150405"), rankList)
+			}
 		}
 
 	}
