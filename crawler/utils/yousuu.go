@@ -1,7 +1,8 @@
 package utils
 
 import (
-	. "crawler/structs" // 直接使用包内导出物
+	// 直接使用包内导出物
+	"crawler/structs"
 	"errors"
 	"fmt"
 	"regexp"
@@ -9,7 +10,7 @@ import (
 	"strings"
 )
 
-func fmt2Entity(s string) ListEntity_yousuu {
+func fmt2Entity(s string) structs.ListEntity_yousuu {
 	attrs := strings.Split(s, " ")
 
 	rank, err := strconv.Atoi(attrs[0])
@@ -32,7 +33,7 @@ func fmt2Entity(s string) ListEntity_yousuu {
 		fmt.Println(err.Error())
 	}
 
-	res := ListEntity_yousuu{
+	res := structs.ListEntity_yousuu{
 		Rank:       rank,
 		Name:       attrs[1],
 		WordNum:    wordNum,

@@ -195,7 +195,8 @@ func GetViableRanks(rankNames []string, placeHolder string) {
 		if err != nil {
 			fmt.Println(err.Error())
 		} else {
-			utils.SaveAsJson(rankList.Name+rankList.Time.Format("20060102150405"), rankList)
+			dir := "./data/"
+			utils.SaveAsJson(rankList.Name+rankList.Time.Format("20060102150405"), rankList, dir)
 		}
 
 	}
@@ -215,7 +216,8 @@ func GetViableRankSpecifyClasses(rankNames []string, tagsName []string, placeHol
 			if err != nil {
 				fmt.Println(err.Error())
 			} else {
-				utils.SaveAsJson(rankList.Name+structs.ReversedMap[tagname]+rankList.Time.Format("20060102150405"), rankList)
+				dir := "./data/"
+				utils.SaveAsJson(rankList.Name+structs.ReversedMap[tagname]+rankList.Time.Format("20060102150405"), rankList, dir)
 			}
 		}
 

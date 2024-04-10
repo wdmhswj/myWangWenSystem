@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -30,7 +29,7 @@ func TestReplacePlaceholer(t *testing.T) {
 	// })
 }
 
-func TestLoad(t *testing.T) {
-	list := LoadJsonAsStruct("月票榜以起点平台投出月票为排序依据的榜单20240410175832.json")
-	fmt.Println(list.Name)
-}
+// func TestLoad(t *testing.T) {
+// 	list := LoadJsonAsStruct("月票榜以起点平台投出月票为排序依据的榜单20240410175832.json")
+// 	fmt.Println(list.Name)
+// }

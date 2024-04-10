@@ -3,14 +3,29 @@ package utils
 import (
 	"crawler/structs"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"regexp"
 )
 
-func SaveAsJson(filename string, entity structs.RankingList_qidian) {
-	filename += ".json"
+func SaveAsJson(filename string, entity structs.RankingList_qidian, dir string) {
+	// 若不存在data目录则创建
+	ok, err := FileDirExist(dir)
+	if !ok {
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		err = os.Mkdir(dir, 0750)
+		if err != nil {
+			fmt.Println("failed to mkdir:", err.Error())
+			return
+		}
+	}
+	filename = dir + filename + ".json"
 	// fmt.Println(filename)
 	if _, err := os.Stat(filename); err == nil {
 		fmt.Println("相同文件名称的JSON文件已存在！")
@@ -56,7 +71,13 @@ func ReplacePlaceholer(placeHodler string, target string, replacer string) strin
 	return output
 }
 
-func LoadJsonAsStruct(filename string) structs.RankingList_qidian {
+func LoadJsonAsStruct(filename string, dir string) structs.RankingList_qidian {
+	if ok, _ := FileDirExist(dir); !ok {
+		fmt.Println(dir + "目录return")
+		return structs.RankingList_qidian{}
+	}
+	filename = dir + filename
+
 	// fmt.Println(filename)
 	if _, err := os.Stat(filename); err == nil {
 		// 打开 JSON 文件
@@ -90,4 +111,72 @@ func LoadJsonAsStruct(filename string) structs.RankingList_qidian {
 		fmt.Println(filename + "文件不存在！")
 		return structs.RankingList_qidian{}
 	}
+}
+
+func FileDirExist(file string) (bool, error) {
+	_, err := os.Stat(file)
+	if err == nil {
+		return true, nil
+	} else if os.IsNotExist(err) {
+		return false, nil
+	} else {
+		return false, err
+	}
+}
+
+func GetAllFileName(dirname string) ([]string, error) {
+	// 打开当前目录
+	dir, err := os.Open(dirname)
+	if err != nil {
+		fmt.Println("打开目录失败:", err)
+		return nil, errors.New("打开目录失败: " + err.Error())
+	}
+	defer dir.Close()
+
+	// 读取目录中的文件名
+	files, err := dir.Readdirnames(-1) // -1 表示读取所有文件名
+	if err != nil {
+		fmt.Println("读取文件名失败:", err)
+		return nil, errors.New("读取文件名失败: " + err.Error())
+	}
+
+	return files, nil
+}
+
+func MoveFiles(sourceDir, targetDir string) error {
+	// 打开源目录
+	source, err := os.Open(sourceDir)
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	// 读取源目录下的所有文件和子目录
+	entries, err := source.Readdir(0)
+	if err != nil {
+		return err
+	}
+
+	// 遍历文件和子目录
+	for _, entry := range entries {
+		// if entry.IsDir() {
+		// 	// 如果是子目录，则递归调用 moveFiles 函数
+		// 	err := moveFiles(filepath.Join(sourceDir, entry.Name()), targetDir)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// } else {
+		if !entry.IsDir() {
+			// 如果是文件，则移动到目标目录
+			sourceFile := filepath.Join(sourceDir, entry.Name())
+			targetFile := filepath.Join(targetDir, entry.Name())
+			err := os.Rename(sourceFile, targetFile)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("移动文件 %s 到 %s\n", sourceFile, targetFile)
+		}
+	}
+
+	return nil
 }
