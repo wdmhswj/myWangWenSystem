@@ -1,13 +1,15 @@
 package utils
 
 import (
+	"crawler/structs"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"regexp"
 )
 
-func SaveAsJson(filename string, entity any) {
+func SaveAsJson(filename string, entity structs.RankingList_qidian) {
 	filename += ".json"
 	// fmt.Println(filename)
 	if _, err := os.Stat(filename); err == nil {
@@ -52,4 +54,40 @@ func ReplacePlaceholer(placeHodler string, target string, replacer string) strin
 	output := re.ReplaceAllStringFunc(target, replacer_func)
 
 	return output
+}
+
+func LoadJsonAsStruct(filename string) structs.RankingList_qidian {
+	// fmt.Println(filename)
+	if _, err := os.Stat(filename); err == nil {
+		// 打开 JSON 文件
+		file, err := os.Open(filename)
+		if err != nil {
+			fmt.Println("打开 JSON 文件失败:", err)
+			return structs.RankingList_qidian{}
+		}
+		defer file.Close()
+
+		// 读取 JSON 数据
+		jsonData, err := io.ReadAll(file)
+		if err != nil {
+			fmt.Println("读取 JSON 数据失败:", err)
+			return structs.RankingList_qidian{}
+		}
+
+		// 解析 JSON 数据到结构体实例
+		var entity structs.RankingList_qidian
+
+		err = json.Unmarshal(jsonData, &entity)
+		if err != nil {
+			fmt.Println("反序列化 JSON 失败:", err)
+			return structs.RankingList_qidian{}
+		}
+
+		fmt.Println("反序列化成功")
+		return entity
+
+	} else {
+		fmt.Println(filename + "文件不存在！")
+		return structs.RankingList_qidian{}
+	}
 }

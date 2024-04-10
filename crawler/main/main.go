@@ -1,69 +1,45 @@
 package main
 
 import (
+	"crawler/analysis"
 	"crawler/qidian"
 	"crawler/structs"
+	"crawler/utils"
+	"fmt"
 )
 
 func main() {
-	// rankList, _ := qidian.GetTodayPopularNovels(
-	// 	"https://www.qidian.com/rank/readindex/",
-	// 	"https://www.qidian.com/rank/readindex/page{index}/",
-	// 	"www.qidian.com",
-	// 	"{index}",
-	// 	5,
-	// )
+	// 加载
+	filenames := []string{
+		"畅销榜本日作品销量排行20240410175834",
+		"收藏榜历史总作品收藏数排行20240410175839",
+		"书友榜本周新增书友最多作品排行20240410175836",
+		"推荐榜本周作品推荐票数排行20240410175838",
+		"月票榜以起点平台投出月票为排序依据的榜单20240410175832",
+		"阅读指数榜本周阅读指数排行20240410175835",
+		"VIP收藏榜VIP作品被加入书架数量的排行20240410175842",
+	}
+	for i, name := range filenames {
+		filenames[i] = name + ".json"
+	}
+	var lists []structs.RankingList_qidian
+	for _, name := range filenames {
+		list := utils.LoadJsonAsStruct(name)
+		lists = append(lists, list)
+	}
 
-	// utils.SaveAsJson(rankList.Name+rankList.Time.Format("20060102150405"), rankList)
+	comprehensiveRank := analysis.GetComprehensiveRank(lists)
+	for i, name := range comprehensiveRank {
+		fmt.Printf("%d  %s\n", i+1, name)
+	}
 
-	// rankList2, _ := qidian.GetTodayPopularNovels(
-	// 	"https://www.qidian.com/rank/newfans/",
-	// 	"https://www.qidian.com/rank/newfans/page{index}/",
-	// 	"www.qidian.com",
-	// 	"{index}",
-	// 	5,
-	// )
 
-	// utils.SaveAsJson(rankList2.Name+rankList2.Time.Format("20060102150405"), rankList2)
 
-	// var rankNames []string = []string{
-	// 	"readindex",
-	// 	"newfans",
-	// 	"yuepiao",
-	// 	"hotsales",
-	// 	"newfans",
-	// 	"recom",
-	// 	"collect",
-	// 	"vipup",
-	// 	"vipcollect",
-	// }
-
-	placeHolder := "{index}"
-
-	// qidian.GetViableRanks(structs.Ranks, placeHolder)
-	qidian.GetViableRankSpecifyClasses(structs.Ranks, structs.TagsPageName, placeHolder)
+	// fetchRanks()
 }
 
-// func test_yousuu() {
-// 	test, err := yousuu.GetTodayPopularNovels()
-// 	if err != nil {
-// 		fmt.Println(err.Error())
-// 		return
-// 	}
-
-// 	// 将结构体实例序列化为 JSON 格式
-// 	jsonData, err := json.MarshalIndent(test, "", "    ")
-// 	if err != nil {
-// 		fmt.Println("序列化 JSON 失败:", err)
-// 		return
-// 	}
-
-// 	// 将 JSON 数据写入本地文件
-// 	err = os.WriteFile("ranking_list.json", jsonData, 0644)
-// 	if err != nil {
-// 		fmt.Println("写入 JSON 文件失败:", err)
-// 		return
-// 	}
-
-// 	fmt.Println("JSON 文件保存成功！")
-// }
+func fetchRanks() {
+	placeHolder := "{index}"
+	// qidian.GetViableRankSpecifyClasses(structs.Ranks, structs.TagsPageName, placeHolder)
+	qidian.GetViableRanks(structs.Ranks, placeHolder)
+}

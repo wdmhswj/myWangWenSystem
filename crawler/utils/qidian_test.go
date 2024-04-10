@@ -1,6 +1,9 @@
 package utils
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestReplacePlaceholer(t *testing.T) {
 
@@ -19,10 +22,15 @@ func TestReplacePlaceholer(t *testing.T) {
 		asserCorrectMessage(t, res, want)
 	})
 
-	t.Run("test1", func(t *testing.T) {
-		filename := "../test"
-		SaveAsJson(filename, "test")
-		// res = ReplacePlaceholer("{count}", res, "2")
-		// asserCorrectMessage(t, res, want)
-	})
+	// t.Run("test2", func(t *testing.T) {
+	// 	filename := "../test"
+	// 	SaveAsJson(filename, "test")
+	// 	// res = ReplacePlaceholer("{count}", res, "2")
+	// 	// asserCorrectMessage(t, res, want)
+	// })
+}
+
+func TestLoad(t *testing.T) {
+	list := LoadJsonAsStruct("月票榜以起点平台投出月票为排序依据的榜单20240410175832.json")
+	fmt.Println(list.Name)
 }
