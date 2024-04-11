@@ -4,6 +4,7 @@ import (
 	"crawler/structs"
 	"crawler/utils"
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"time"
@@ -220,6 +221,29 @@ func GetViableRankSpecifyClasses(rankNames []string, tagsName []string, placeHol
 				utils.SaveAsJson(rankList.Name+structs.ReversedMap[tagname]+rankList.Time.Format("20060102150405"), rankList, dir)
 			}
 		}
+
+	}
+}
+
+func GetViableRankSpecifyClass(rankNames []string, tagName string, placeHolder string) {
+	for _, name := range rankNames {
+		// for _, tagname := range tagsName {
+		rankList, err := getRankData(
+			"https://www.qidian.com/rank/"+name+"/"+tagName+"/",
+			"https://www.qidian.com/rank/"+name+"/"+tagName+"/page"+placeHolder+"/",
+			// "https://www.qidian.com/rank/readindex/page{index}/",
+			"www.qidian.com",
+			placeHolder,
+			5,
+		)
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			dir := "./data/"
+			dir = filepath.Join(dir, tagName)
+			utils.SaveAsJson(rankList.Name+structs.ReversedMap[tagName]+rankList.Time.Format("20060102150405"), rankList, dir)
+		}
+		// }
 
 	}
 }

@@ -7,12 +7,13 @@ import (
 	"crawler/utils"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
 func main() {
 
-	getArchiveAnalyze()
+	getArchiveAnalyzeByTag("chn22")
 }
 
 func fetchRanks() {
@@ -51,17 +52,6 @@ func getNewRank(dir string) {
 		// }
 	}
 
-	// // 加载
-	// filenames := []string{
-	// 	"畅销榜本日作品销量排行20240410230148.json",
-	// 	"收藏榜历史总作品收藏数排行20240410230154.json",
-	// 	"书友榜本周新增书友最多作品排行20240410230151.json",
-	// 	"推荐榜本周作品推荐票数排行20240410230152.json",
-	// 	"月票榜以起点平台投出月票为排序依据的榜单20240410230146.json",
-	// 	"阅读指数榜本周阅读指数排行20240410230150.json",
-	// 	"VIP收藏榜VIP作品被加入书架数量的排行20240410230157.json",
-	// }
-
 	var lists []structs.RankingList_qidian
 	for _, name := range loadFiles {
 		fmt.Println("loadFile:", name)
@@ -77,8 +67,13 @@ func getNewRank(dir string) {
 
 func dataArchive(sourceDir, newDir string) {
 	if ok, _ := utils.FileDirExist(sourceDir); !ok {
-		fmt.Println(sourceDir + "目录不存在")
-		return
+		// fmt.Println(sourceDir + "目录不存在")
+		// return
+		err := os.Mkdir(sourceDir, 0750)
+		if err != nil {
+			fmt.Println("failed to mkdir:", err.Error())
+			return
+		}
 	}
 
 	// 创建新目录
@@ -101,4 +96,20 @@ func getArchiveAnalyze() {
 	dataArchive("./data/", "./data/archive/")
 	fetchRanks()
 	getNewRank("./data/")
+}
+
+func getArchiveAnalyzeByTag(tag string) {
+	// 存档
+	sourceDir := filepath.Join("./data/", tag)
+	newDir := filepath.Join("./data/archive/", tag)
+	dataArchive(sourceDir, newDir)
+
+	// 爬取
+	placeHolder := "{index}"
+	qidian.GetViableRankSpecifyClass(structs.Ranks, tag, placeHolder)
+
+	// 分析
+	fmt.Println(structs.ReversedMap[tag] + "综合榜如下：")
+	getNewRank(sourceDir)
+
 }

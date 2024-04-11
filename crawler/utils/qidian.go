@@ -25,7 +25,9 @@ func SaveAsJson(filename string, entity structs.RankingList_qidian, dir string) 
 			return
 		}
 	}
-	filename = dir + filename + ".json"
+	filename += ".json"
+	filename = filepath.Join(dir, filename)
+	// filename = dir + filename + ".json"
 	// fmt.Println(filename)
 	if _, err := os.Stat(filename); err == nil {
 		fmt.Println("相同文件名称的JSON文件已存在！")
@@ -76,7 +78,7 @@ func LoadJsonAsStruct(filename string, dir string) structs.RankingList_qidian {
 		fmt.Println(dir + "目录return")
 		return structs.RankingList_qidian{}
 	}
-	filename = dir + filename
+	filename = filepath.Join(dir, filename)
 
 	// fmt.Println(filename)
 	if _, err := os.Stat(filename); err == nil {
