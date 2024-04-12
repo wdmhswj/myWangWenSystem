@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	getArchiveAnalyzeByTag("chn22")
+	getArchiveAnalyzeByTag(structs.TagsMap["玄幻"])
 }
 
 func fetchRanks() {
