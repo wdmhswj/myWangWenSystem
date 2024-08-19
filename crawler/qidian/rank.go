@@ -58,7 +58,7 @@ func getRankData(initialUrl, pageTemplete, allowDomain, placeHoler string, pageN
 		} else {
 			match := re.FindStringSubmatch(requestURL)
 			if len(match) > 1 {
-				fmt.Println("匹配的数字部分:", match[1])
+				// fmt.Println("匹配的数字部分:", match[1])
 				index, err = strconv.Atoi(match[1])
 				if err != nil {
 					fmt.Println(err.Error())
@@ -69,11 +69,11 @@ func getRankData(initialUrl, pageTemplete, allowDomain, placeHoler string, pageN
 
 		}
 
-		fmt.Println("requestURL:", requestURL)
+		// fmt.Println("requestURL:", requestURL)
 		rank, _ := strconv.Atoi(e.Attr("data-rid"))
-		fmt.Println("old rank:", rank)
+		// fmt.Println("old rank:", rank)
 		rank += 20 * (index - 1)
-		fmt.Println("rank:", rank)
+		// fmt.Println("rank:", rank)
 		entity.Rank = rank
 		// // img src
 		// imgUrl := e.DOM.Find("div.book-img-box").Text()
@@ -81,44 +81,44 @@ func getRankData(initialUrl, pageTemplete, allowDomain, placeHoler string, pageN
 
 		// book name
 		name := e.DOM.Find("div.book-mid-info h2 a").Text()
-		fmt.Println("book name:", name)
+		// fmt.Println("book name:", name)
 		entity.Name = name
 
 		// author
 		author := e.DOM.Find("div.book-mid-info p.author a.name").Text()
-		fmt.Println("author:", author)
+		// fmt.Println("author:", author)
 		entity.Author = author
 
 		// mainTag
 		mainTag := e.DOM.Find("div.book-mid-info p.author a:nth-child(4)").Text()
-		fmt.Println("mainTag:", mainTag)
+		// fmt.Println("mainTag:", mainTag)
 		entity.MainTag = mainTag
 
 		// subTag
 		subTag := e.DOM.Find("div.book-mid-info p.author a:nth-child(6)").Text()
-		fmt.Println("subTag:", subTag)
+		// fmt.Println("subTag:", subTag)
 		entity.SubTag = subTag
 
 		// state
 		state := e.DOM.Find("div.book-mid-info p.author span").Text()
-		fmt.Println("state:", state)
+		// fmt.Println("state:", state)
 		entity.State = state
 
 		// updateTime
 		updateTime := e.DOM.Find("div.book-mid-info p.update span").Text()
-		fmt.Println("updateTime:", updateTime)
+		// fmt.Println("updateTime:", updateTime)
 		entity.UpdateTime = updateTime
 
 		// url
 		url, _ := e.DOM.Find("div.book-right-info p.btn a.red-btn").Attr("href")
 		url = url[2:]
-		fmt.Println("url:", url)
+		// fmt.Println("url:", url)
 		entity.BookUrl = url
 
 		// img
 		img, _ := e.DOM.Find("div.book-img-box a img").Attr("src")
 		img = img[2:]
-		fmt.Println("img:", img)
+		// fmt.Println("img:", img)
 		entity.ImgUrl = img
 
 		ranklist.Entities = append(ranklist.Entities, entity)
@@ -159,13 +159,13 @@ func getRankData(initialUrl, pageTemplete, allowDomain, placeHoler string, pageN
 		fmt.Println("响应状态码:", r.StatusCode)
 
 		// 打印响应头
-		fmt.Println("响应头:", r.Headers)
+		// fmt.Println("响应头:", r.Headers)
 		// for key, value := range r.Headers {
 		// 	fmt.Printf("%s: %s\n", key, value)
 		// }
 
 		// 打印响应体（HTML 或者其他数据）
-		fmt.Println("响应体: ...")
+		// fmt.Println("响应体: ...")
 		// fmt.Println(string(r.Body))
 
 	})

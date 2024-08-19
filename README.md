@@ -10,12 +10,13 @@
 
 ### 基本框架相关
 - [X] 创建Git项目
-- [X] 选取Go的web框架：Gin
+~~- [X] 选取Go的web框架：Gin~~
 - [X] Go语言爬虫框架：Colly
 - [ ] 解析mhtml文件
 - [ ] 解析html文件
-- [ ] 数据可视化
-  - [x] 使用框架：Chart.js
+- [x] 数据可视化：直接使用开源平台 django-vue3-admin
+  - [x] 前端框架：Vue
+  - [x] 后端框架：Django
 
 ### 内容相关
 - [ ] 爬取yousuu
